@@ -99,5 +99,5 @@ MESSAGE_TAGS = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://jerson-production.up.railway.app',
+    'https://jeni-mobiles-production.up.railway.app/',
 ]
