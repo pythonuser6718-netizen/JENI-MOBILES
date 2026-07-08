@@ -67,7 +67,12 @@ class Product(models.Model):
             ('RAM', self.ram), ('Storage', self.storage), ('Display', self.display),
             ('Battery', self.battery), ('Camera', self.camera), ('Color', self.color),
         ]
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/gallery/')
 
+    def __str__(self):
+        return f"Image for {self.product.name}"
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
