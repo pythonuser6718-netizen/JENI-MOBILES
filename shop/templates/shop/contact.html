@@ -1,0 +1,41 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Contact — JENI MOBILES{% endblock %}
+
+{% block content %}
+<section class="contact-page">
+  <div class="container contact-inner">
+    <div data-reveal>
+      <span class="eyebrow">Talk to us</span>
+      <h1>We reply within a day</h1>
+      <p class="hero-sub">Questions about an order, a device, or a bulk purchase — send it over.</p>
+      <div class="contact-details">
+        <div><strong>Email</strong><span>jenimobiles91@gmail.com</span></div>
+        <div><strong>Phone</strong><span>+91 8438136256</span></div>
+        <div><strong>Hours</strong><span>Mon–Sat, 10am–8pm</span></div>
+      </div>
+    </div>
+
+    <form method="post" class="checkout-form" data-reveal>
+      {% csrf_token %}
+      <label class="floating-label">
+        <input type="text" name="name" required placeholder=" ">
+        <span>Your name</span>
+      </label>
+      <label class="floating-label">
+        <input type="email" name="email" required placeholder=" ">
+        <span>Email</span>
+      </label>
+      <label class="floating-label">
+        <input type="text" name="subject" placeholder=" ">
+        <span>Subject</span>
+      </label>
+      <label class="floating-label">
+        <textarea name="message" rows="4" required placeholder=" "></textarea>
+        <span>Message</span>
+      </label>
+      <button type="submit" class="btn-signature btn-signature--wide">Send message</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

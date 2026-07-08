@@ -1,0 +1,123 @@
+{% extends 'shop/base.html' %}
+{% load shop_extras %}
+
+{% block title %}{{ product.name }} — JENI MOBILES{% endblock %}
+
+{% block content %}
+<section class="detail">
+  <div class="container detail-inner">
+    <div class="detail-stage" id="detailStage">
+      <div class="hero-JENI MOBILES-ring"></div>
+      {% if product.discount_percent %}<span class="badge badge--sale badge--floating">-{{ product.discount_percent }}%</span>{% endif %}
+      {% if product.photo %}
+      <div class="phone-photo phone-photo--hero" id="tiltPhoneDetail">
+        <img src="{{ product.photo.url }}" alt="{{ product.name }}">
+      </div>
+      {% else %}
+      <div class="phone-mock phone-mock--hero" id="tiltPhoneDetail" style="--hue: {{ product.hue }};">
+        <div class="phone-mock__shine"></div>
+        <div class="phone-mock__notch"></div>
+        <div class="phone-mock__screen">
+          <div class="phone-mock__status"><span>9:41</span><span class="phone-mock__dots"><i></i><i></i><i></i></span></div>
+          <div class="phone-mock__glow-orb"></div>
+          <div class="phone-mock__brand">{{ product.brand }}</div>
+          <div class="phone-mock__model">{{ product.name }}</div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="detail-info" data-reveal>
+      <span class="eyebrow">{{ product.category.name }} · {{ product.brand }}</span>
+      <h1>{{ product.name }}</h1>
+      <p class="detail-tagline">{{ product.tagline }}</p>
+
+      <div class="detail-rating">
+        <span class="stars" style="--rating: {{ product.rating }};" aria-hidden="true"></span>
+        <span>{{ product.rating }} / 5</span>
+      </div>
+
+      <div class="detail-price">
+        <span class="price-now">{{ product.current_price|inr }}</span>
+        {% if product.discount_price %}<span class="price-was">{{ product.price|inr }}</span>{% endif %}
+      </div>
+
+      <p class="detail-desc">{{ product.description }}</p>
+
+      <form action="{% url 'shop:add_to_cart' product.id %}" method="post" class="detail-form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" data-step="-1">−</button>
+          <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" id="qtyInput">
+          <button type="button" class="qty-btn" data-step="1">+</button>
+        </div>
+        <button type="submit" class="btn-signature btn-signature--wide">Add to cart</button>
+      </form>
+
+      <div class="detail-meta">
+        <span>{{ product.stock }} in stock</span>
+        <span>·</span>
+        <span>Free delivery in 24hrs</span>
+      </div>
+
+      <div class="spec-grid">
+        {% for label, value in product.specs %}
+        {% if value != '-' %}
+        <div class="spec-item">
+          <span class="spec-item__label">{{ label }}</span>
+          <span class="spec-item__value">{{ value }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if related %}
+<section class="related">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">You might also like</span>
+      <h2>More in {{ product.category.name }}</h2>
+    </div>
+    <div class="scroll-row">
+      {% for p in related %}
+      <a href="{{ p.get_absolute_url }}" class="mini-card tilt-card" data-reveal data-reveal-delay="{{ forloop.counter0 }}">
+        {% if p.photo %}
+        <div class="phone-photo phone-photo--mini"><img src="{{ p.photo.url }}" alt="{{ p.name }}"></div>
+        {% else %}
+        <div class="phone-mock phone-mock--mini" style="--hue: {{ p.hue }};">
+          <div class="phone-mock__shine"></div>
+          <div class="phone-mock__screen"></div>
+        </div>
+        {% endif %}
+        <span class="mini-card__brand">{{ p.brand }}</span>
+        <span class="mini-card__name">{{ p.name }}</span>
+        <span class="mini-card__price">{{ p.current_price|inr }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const qtyInput = document.getElementById('qtyInput');
+    document.querySelectorAll('.qty-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const step = parseInt(btn.dataset.step, 10);
+        const max = parseInt(qtyInput.max || 99, 10);
+        let val = parseInt(qtyInput.value, 10) + step;
+        if (val < 1) val = 1;
+        if (val > max) val = max;
+        qtyInput.value = val;
+      });
+    });
+  });
+</script>
+{% endblock %}

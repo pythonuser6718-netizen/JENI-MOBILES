@@ -1,0 +1,61 @@
+{% extends 'shop/base.html' %}
+{% load shop_extras %}
+
+{% block title %}Checkout — JENI MOBILES{% endblock %}
+
+{% block content %}
+<section class="checkout-page">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Almost there</span>
+      <h1>Checkout</h1>
+    </div>
+
+    <div class="checkout-layout">
+      <form method="post" class="checkout-form" data-reveal>
+        {% csrf_token %}
+        <div class="form-row">
+          <label class="floating-label">
+            <input type="text" name="full_name" required placeholder=" ">
+            <span>Full name</span>
+          </label>
+          <label class="floating-label">
+            <input type="email" name="email" required placeholder=" ">
+            <span>Email</span>
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="floating-label">
+            <input type="tel" name="phone" required placeholder=" ">
+            <span>Phone number</span>
+          </label>
+          <label class="floating-label">
+            <input type="text" name="pincode" required placeholder=" ">
+            <span>Pincode</span>
+          </label>
+        </div>
+        <label class="floating-label">
+          <input type="text" name="city" required placeholder=" ">
+          <span>City</span>
+        </label>
+        <label class="floating-label">
+          <textarea name="address" rows="3" required placeholder=" "></textarea>
+          <span>Delivery address</span>
+        </label>
+        <button type="submit" class="btn-signature btn-signature--wide">Place order</button>
+      </form>
+
+      <div class="cart-summary" data-reveal>
+        <h3>Order summary</h3>
+        {% for item in cart %}
+        <div class="cart-summary__row">
+          <span>{{ item.product.name }} × {{ item.quantity }}</span>
+          <span>{{ item.subtotal|inr }}</span>
+        </div>
+        {% endfor %}
+        <div class="cart-summary__row cart-summary__row--total"><span>Total</span><span>{{ cart.get_total|inr }}</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

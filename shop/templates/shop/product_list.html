@@ -1,0 +1,97 @@
+{% extends 'shop/base.html' %}
+{% load shop_extras %}
+
+{% block title %}Shop — JENI MOBILES{% endblock %}
+
+{% block content %}
+<section class="shop-header" data-reveal>
+  <div class="container">
+    <span class="eyebrow">Full catalogue</span>
+    <h1>Find your next phone</h1>
+  </div>
+</section>
+
+<section class="shop-layout">
+  <div class="container shop-layout__inner">
+    <aside class="filters" data-reveal>
+      <form method="get" id="filterForm">
+        <div class="filter-group">
+          <h4>Search</h4>
+          <input type="text" name="q" value="{{ query }}" placeholder="Search phones...">
+        </div>
+        <div class="filter-group">
+          <h4>Category</h4>
+          <a href="{% url 'shop:product_list' %}" class="filter-pill {% if not active_category %}filter-pill--active{% endif %}">All</a>
+          {% for cat in categories %}
+          <a href="?category={{ cat.slug }}" class="filter-pill {% if active_category == cat.slug %}filter-pill--active{% endif %}">{{ cat.name }}</a>
+          {% endfor %}
+        </div>
+        <div class="filter-group">
+          <h4>Brand</h4>
+          <select name="brand" onchange="this.form.submit()">
+            <option value="">All brands</option>
+            {% for b in brands %}
+            <option value="{{ b }}" {% if active_brand == b %}selected{% endif %}>{{ b }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filter-group">
+          <h4>Sort by</h4>
+          <select name="sort" onchange="this.form.submit()">
+            <option value="">Relevance</option>
+            <option value="price_low" {% if active_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_high" {% if active_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+            <option value="rating" {% if active_sort == 'rating' %}selected{% endif %}>Top Rated</option>
+            <option value="newest" {% if active_sort == 'newest' %}selected{% endif %}>Newest</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-signature filter-apply">Apply filters</button>
+      </form>
+    </aside>
+
+    <div class="shop-results">
+      <div class="shop-results__meta" data-reveal>{{ products|length }} device{{ products|length|pluralize }} found</div>
+      <div class="product-grid">
+        {% for product in products %}
+        <article class="product-card tilt-card" data-reveal data-reveal-delay="{{ forloop.counter0 }}">
+          <a href="{{ product.get_absolute_url }}" class="product-card__link">
+            <div class="product-card__stage">
+              {% if product.discount_percent %}<span class="badge badge--sale">-{{ product.discount_percent }}%</span>{% endif %}
+              {% if product.is_new %}<span class="badge badge--new">New</span>{% endif %}
+              {% if product.photo %}
+              <div class="phone-photo phone-photo--card"><img src="{{ product.photo.url }}" alt="{{ product.name }}"></div>
+              {% else %}
+              <div class="phone-mock phone-mock--card" style="--hue: {{ product.hue }};">
+                <div class="phone-mock__shine"></div>
+                <div class="phone-mock__notch"></div>
+                <div class="phone-mock__screen">
+                  <div class="phone-mock__glow-orb phone-mock__glow-orb--sm"></div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+            <div class="product-card__body">
+              <span class="product-card__brand">{{ product.brand }}</span>
+              <h3 class="product-card__name">{{ product.name }}</h3>
+              <p class="product-card__tagline">{{ product.tagline }}</p>
+              <div class="product-card__price">
+                <span class="price-now">{{ product.current_price|inr }}</span>
+                {% if product.discount_price %}<span class="price-was">{{ product.price|inr }}</span>{% endif %}
+              </div>
+            </div>
+          </a>
+          <form action="{% url 'shop:add_to_cart' product.id %}" method="post" class="product-card__cta">
+            {% csrf_token %}
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="next" value="{% url 'shop:product_list' %}">
+            <button type="submit" class="btn-add">Add to cart</button>
+          </form>
+        </article>
+        {% empty %}
+        <p class="empty-state">No devices match those filters. Try widening your search.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

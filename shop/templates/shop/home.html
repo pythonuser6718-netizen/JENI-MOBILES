@@ -1,0 +1,188 @@
+{% extends 'shop/base.html' %}
+{% load static shop_extras %}
+
+{% block content %}
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy" data-reveal>
+      <span class="eyebrow">New drops, live now</span>
+      <h1 class="hero-title">Feel every<br><span class="text-gradient">detail.</span></h1>
+      <p class="hero-sub">Flagship cameras, foldable canvases and all-day batteries — engineered devices for people who notice the details.</p>
+      <div class="hero-actions">
+        <a href="{% url 'shop:product_list' %}" class="btn-signature">Shop the range</a>
+        {% if hero_product %}
+        <a href="{{ hero_product.get_absolute_url }}" class="btn-ghost">View {{ hero_product.name }} →</a>
+        {% endif %}
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat__num" data-count="120">0</span><span class="stat__label">Devices in stock</span></div>
+        <div class="stat"><span class="stat__num" data-count="4">0</span><span class="stat__label">Brands</span></div>
+        <div class="stat"><span class="stat__num" data-count="24">0</span><span class="stat__label">Hr delivery</span></div>
+      </div>
+    </div>
+
+    <div class="hero-stage" id="heroStage">
+      <div class="hero-JENI MOBILES -ring"></div>
+      <div class="hero-JENI MOBILES-ring hero-JENI MOBILES-ring--2"></div>
+      {% if hero_product %}
+      {% if hero_product.photo %}
+      <div class="phone-photo phone-photo--hero" id="tiltPhone">
+        <img src="{{ hero_product.photo.url }}" alt="{{ hero_product.name }}">
+      </div>
+      {% else %}
+      <div class="phone-mock phone-mock--hero" id="tiltPhone" style="--hue: {{ hero_product.hue }};">
+        <div class="phone-mock__shine"></div>
+        <div class="phone-mock__notch"></div>
+        <div class="phone-mock__screen">
+          <div class="phone-mock__status">
+            <span>9:41</span>
+            <span class="phone-mock__dots"><i></i><i></i><i></i></span>
+          </div>
+          <div class="phone-mock__glow-orb"></div>
+          <div class="phone-mock__brand">{{ hero_product.brand }}</div>
+          <div class="phone-mock__model">{{ hero_product.name }}</div>
+        </div>
+      </div>
+      {% endif %}
+      <div class="hero-chip hero-chip--1" data-reveal>{{ hero_product.camera|default:"50MP camera" }}</div>
+      <div class="hero-chip hero-chip--2" data-reveal>{{ hero_product.battery|default:"5000mAh battery" }}</div>
+      <div class="hero-chip hero-chip--3" data-reveal>{{ hero_product.current_price|inr }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="category-strip">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Browse</span>
+      <h2>Shop by category</h2>
+    </div>
+    <div class="category-grid">
+      {% for cat in categories %}
+      <a href="{% url 'shop:product_list' %}?category={{ cat.slug }}" class="category-card" data-reveal data-reveal-delay="{{ forloop.counter0|add:1 }}">
+        <span class="category-card__icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="6" y="1.5" width="12" height="21" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="18.4" r="0.8" fill="currentColor"/></svg>
+        </span>
+        <span class="category-card__name">{{ cat.name }}</span>
+        <span class="category-card__count">{{ cat.products.count }} devices</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="featured">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Handpicked</span>
+      <h2>Featured devices</h2>
+    </div>
+    <div class="product-grid">
+      {% for product in featured %}
+      <article class="product-card tilt-card" data-reveal data-reveal-delay="{{ forloop.counter0|add:1 }}">
+        <a href="{{ product.get_absolute_url }}" class="product-card__link">
+          <div class="product-card__stage">
+            {% if product.discount_percent %}<span class="badge badge--sale">-{{ product.discount_percent }}%</span>{% endif %}
+            {% if product.is_new %}<span class="badge badge--new">New</span>{% endif %}
+            {% if product.photo %}
+            <div class="phone-photo phone-photo--card"><img src="{{ product.photo.url }}" alt="{{ product.name }}"></div>
+            {% else %}
+            <div class="phone-mock phone-mock--card" style="--hue: {{ product.hue }};">
+              <div class="phone-mock__shine"></div>
+              <div class="phone-mock__notch"></div>
+              <div class="phone-mock__screen">
+                <div class="phone-mock__glow-orb phone-mock__glow-orb--sm"></div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          <div class="product-card__body">
+            <span class="product-card__brand">{{ product.brand }}</span>
+            <h3 class="product-card__name">{{ product.name }}</h3>
+            <p class="product-card__tagline">{{ product.tagline }}</p>
+            <div class="product-card__price">
+              <span class="price-now">{{ product.current_price|inr }}</span>
+              {% if product.discount_price %}<span class="price-was">{{ product.price|inr }}</span>{% endif %}
+            </div>
+          </div>
+        </a>
+        <form action="{% url 'shop:add_to_cart' product.id %}" method="post" class="product-card__cta">
+          {% csrf_token %}
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="next" value="{% url 'shop:home' %}">
+          <button type="submit" class="btn-add">Add to cart</button>
+        </form>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="why-us">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Why JENI MOBILES</span>
+      <h2>Built around trust, not just specs</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item" data-reveal>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <h3>Genuine devices</h3>
+        <p>Every unit ships sealed, with a 12-month manufacturer warranty honoured in-store.</p>
+      </div>
+      <div class="feature-item" data-reveal data-reveal-delay="1">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 12h4l3 8 4-16 3 8h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Fast, tracked delivery</h3>
+        <p>Same-day dispatch on in-stock devices with live order tracking from checkout.</p>
+      </div>
+      <div class="feature-item" data-reveal data-reveal-delay="2">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <h3>7-day easy returns</h3>
+        <p>Not the right fit? Return unopened or defective devices within 7 days, no questions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="new-arrivals">
+  <div class="container">
+    <div class="section-head section-head--row" data-reveal>
+      <div>
+        <span class="eyebrow">Just landed</span>
+        <h2>New arrivals</h2>
+      </div>
+      <a href="{% url 'shop:product_list' %}" class="btn-ghost">View all →</a>
+    </div>
+    <div class="scroll-row">
+      {% for product in new_arrivals %}
+      <a href="{{ product.get_absolute_url }}" class="mini-card tilt-card" data-reveal data-reveal-delay="{{ forloop.counter0|add:1 }}">
+        {% if product.photo %}
+        <div class="phone-photo phone-photo--mini"><img src="{{ product.photo.url }}" alt="{{ product.name }}"></div>
+        {% else %}
+        <div class="phone-mock phone-mock--mini" style="--hue: {{ product.hue }};">
+          <div class="phone-mock__shine"></div>
+          <div class="phone-mock__screen"></div>
+        </div>
+        {% endif %}
+        <span class="mini-card__brand">{{ product.brand }}</span>
+        <span class="mini-card__name">{{ product.name }}</span>
+        <span class="mini-card__price">{{ product.current_price|inr }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" data-reveal>
+  <div class="container cta-band__inner">
+    <div>
+      <h2>Trade in your old phone, unlock instant credit.</h2>
+      <p>Get an on-the-spot valuation at checkout — no shipping, no waiting.</p>
+    </div>
+    <a href="{% url 'shop:product_list' %}" class="btn-signature">Start shopping</a>
+  </div>
+</section>
+
+{% endblock %}

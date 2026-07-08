@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}JENI — Mobile SHOP{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
+</head>
+<body>
+
+<div class="page-loader" id="pageLoader">
+  <div class="page-loader__ring"></div>
+</div>
+
+<div class="bg-glow bg-glow--1"></div>
+<div class="bg-glow bg-glow--2"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="{% url 'shop:home' %}" class="brand">
+      <span class="brand__mark">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <rect x="6" y="1.5" width="12" height="21" rx="3" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="12" cy="18.4" r="1" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand__name">JENI MOBILES</span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="{% url 'shop:home' %}" class="nav-link">Home</a>
+      <a href="{% url 'shop:product_list' %}" class="nav-link">Shop</a>
+      <a href="{% url 'shop:product_list' %}?category=flagship" class="nav-link">Flagship</a>
+      <a href="{% url 'shop:contact' %}" class="nav-link">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <form class="header-search" action="{% url 'shop:product_list' %}" method="get">
+        <input type="text" name="q" placeholder="Search phones..." aria-label="Search">
+        <button type="submit" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+      <a href="{% url 'shop:cart_detail' %}" class="cart-link" id="cartLink">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1.4" fill="currentColor"/><circle cx="18" cy="21" r="1.4" fill="currentColor"/></svg>
+        <span class="cart-badge" id="cartBadge">{{ cart_count }}</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+{% if messages %}
+<div class="toast-stack" id="toastStack">
+  {% for message in messages %}
+    <div class="toast toast--{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="brand__name">JENI MOBILES</span>
+      <p>Devices worth building your day around.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <a href="{% url 'shop:product_list' %}?category=flagship">Flagship</a>
+      <a href="{% url 'shop:product_list' %}?category=foldables">Foldables</a>
+      <a href="{% url 'shop:product_list' %}?category=budget">Budget</a>
+      <a href="{% url 'shop:product_list' %}?category=accessories">Accessories</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="{% url 'shop:contact' %}">Contact us</a>
+      <a href="{% url 'shop:cart_detail' %}">Track cart</a>
+    </div>
+    <div class="footer-col">
+      <h4>Stay in JENI MOBILES</h4>
+      <form class="footer-newsletter" onsubmit="return false;">
+        <input type="email" placeholder="you@email.com">
+        <button type="submit" class="btn-signature footer-newsletter__btn">Join</button>
+      </form>
+    </div>
+  </div>
+  <div class="container footer-bottom">© {% now "Y" %} JENI Mobile Store. Built for demo purposes with Django.</div>
+</footer>
+
+<script src="{% static 'shop/js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
