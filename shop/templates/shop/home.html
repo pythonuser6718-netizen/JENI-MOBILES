@@ -111,7 +111,7 @@
         <form action="{% url 'shop:add_to_cart' product.id %}" method="post" class="product-card__cta">
           {% csrf_token %}
           <input type="hidden" name="quantity" value="1">
-          <input type="hidden" name="next" value="{% url 'shop:home' %}">
+          <input type="hidden" name="next" value="{% url 'shop:checkout' %}">
           <button type="submit" class="btn-add">Add to cart</button>
         </form>
       </article>
