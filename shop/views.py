@@ -12,7 +12,7 @@ def home(request):
     featured = Product.objects.filter(is_featured=True)[:4]
     new_arrivals = Product.objects.filter(is_new=True)[:8]
     categories = Category.objects.all()
-    hero_product = featured.first() or Product.objects.first()
+    hero_product = Product.objects.filter(slug='iphone16').first() or featured.first() or Product.objects.first()
     context = {
         'featured': featured,
         'new_arrivals': new_arrivals,
