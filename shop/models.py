@@ -118,14 +118,4 @@ class OrderItem(models.Model):
     def subtotal(self):
         return self.price * self.quantity
 
-class Product(models.Model):
-    # ... your existing fields (ram, storage, display, etc.)
-    photo = models.ImageField(upload_to='products/', blank=True, null=True)  # keep as main/default photo
-    ...
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='products/gallery/')
-    
-    def __str__(self):
-        return f"Image for {self.product.name}"
