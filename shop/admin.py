@@ -1,17 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Category, Product, ContactMessage, Order, OrderItem
-from .models import Product, ProductImage
-
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
-    extra = 3  # 3 empty slots for adding new images by default
-
-class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageInline]
-    # ... your existing list_display, fields etc.
-
-admin.site.register(Product, ProductAdmin)
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
